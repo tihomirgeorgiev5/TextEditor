@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -63,7 +64,11 @@ namespace TextEditor.Controllers
             {
                 return NotFound();
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", doc.UserId);
+            if (doc.UserId != User.FindFirstValue(ClaimTypes.NameIdentifier))
+            {
+                return NotFound();
+            }
+
             return View(doc);
         }
 
@@ -115,6 +120,10 @@ namespace TextEditor.Controllers
                 .Include(d => d.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (doc == null)
+            {
+                return NotFound();
+            }
+            if (doc.UserId != User.FindFirstValue(ClaimTypes.NameIdentifier))
             {
                 return NotFound();
             }
