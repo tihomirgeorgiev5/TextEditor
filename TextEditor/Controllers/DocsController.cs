@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using TextEditor.Data;
 using TextEditor.Models;
 
 namespace TextEditor.Controllers
 {
+    [Authorize]
     public class DocsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -30,7 +28,7 @@ namespace TextEditor.Controllers
         // GET: Docs/Create
         public IActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+            
             return View();
         }
 
@@ -47,7 +45,7 @@ namespace TextEditor.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", doc.UserId);
+          
             return View(doc);
         }
 
